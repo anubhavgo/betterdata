@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+python-jose
+passlib
+pydantic
+sqlalchemy
+psycopg2
+sqlalchemy-utils
+alembic
+sqladmin
+itsdangerous
+fastapi-utils
+bcrypt
