@@ -1,30 +1,57 @@
-version: 2
-jobs:
-  deploy:
-    working_directory: ~/app
-    docker:
-      - image: python:3.11.1-slim
-    steps:
-      - checkout
+version: 2.1
 
-      - run:
-          name: Installing deployment dependencies
-          working_directory: /
-          command: |
-            sudo apt-get -y -qq update
-            sudo apt-get install python3-pip python3-dev build-essential
-            sudo pip3 install awsebcli
+orbs:
+  aws-ecr: circleci/aws-ecr@8.1.2
+  aws-ecs: circleci/aws-ecs@3.0.0
 
-      - run:
-          name: Deploying
-          command: eb deploy $CIRCLE_BRANCH-my-application
+# jobs:
+#   build:
+#     docker:
+#       - image: cimg/python:3.11.4
+#     steps:
+#       - checkout
+#       - run:
+#           name: Install pip packages
+#           command: |
+#             python3 -m venv venv
+#             . venv/bin/activate
+#             pip3 install -r requirements.txt
+
+#       # - run:
+#       #     name: Test with pytest
+#       #     command: |
+#       #       . venv/bin/activate
+#       #       pytest
+
+#   push_to_ecr:
+    # context: aws-dev
+    # create-repo: true
+    # dockerfile: Dockerfile
+    # path: .
+    # tag: "$CIRCLE_SHA1"
+            
+# workflows:
+#   version: 2
+#   build-master:
+#     jobs:
+#       - build
+#       - push_to_ecr:
+#           requires:
+#             - build
 
 workflows:
-  version: 2
-  build:
+  build_and_push_image:
     jobs:
-      - deploy:
-          filters:
-            branches:
-              only:
-                - main
+      - aws-ecr/build-and-push-image: # Use the pre-defined `build-and-push-image` job
+          context: aws-dev
+          create-repo: true
+          dockerfile: Dockerfile
+          path: .
+          repo: betterdata_repo	
+          tag: latest
+      - aws-ecs/deploy-service-update:
+          cluster: betterdata_cluster
+          family: python-app
+          service-name: betterdata1
+          requires:
+            - aws-ecr/build-and-push-image    

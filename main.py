@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import uvicorn
@@ -25,10 +25,14 @@ app.include_router(
     responses={404: {"description": "Not found"}}
 )
 
+@app.get('/healthcheck', status_code=status.HTTP_200_OK)
+def perform_healthcheck():
+    return {'healthcheck': 'Everything OK!'}
+
 auth_middleware = AuthMiddleware(app)
 
 app.middleware("http")(auth_middleware)
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=80, reload=True)

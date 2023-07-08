@@ -1,6 +1,3 @@
-from typing import List
-from sqlalchemy.orm import Session
-from repositories.user_repository import UserRepository
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from schemas.user_schema import User
@@ -25,8 +22,8 @@ class TokenService:
             exp = payload.get("exp")
             user_id = payload.get("user_id")
             if user_id is None or exp is None or exp < time.time():
-                raise HTTPException(status_code=401, detail="Invalid authentication credentials")
+                raise HTTPException(status_code=401, detail="Invalid auth")
             token_data = TokenData(user_id=user_id, exp=exp)
             return token_data
         except JWTError:
-            raise HTTPException(status_code=401, detail="Invalid authentication credentials")
+            raise HTTPException(status_code=401, detail="Invalid auth")

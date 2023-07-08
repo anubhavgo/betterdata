@@ -1,5 +1,4 @@
 from fastapi import Request, HTTPException
-from jose import jwt
 from services.token_service import TokenService
 from fastapi.responses import JSONResponse
 
@@ -12,6 +11,8 @@ class AuthMiddleware:
 
     async def __call__(self, request: Request, call_next):
         # Exclude specific routes from token verification if needed
+        if not request.url.path.startswith("/users"):
+            return await call_next(request)
         for path, method in EXCLUDED_URLS:
             if request.url.path == path and request.method == method:
                 return await call_next(request)
