@@ -6,6 +6,7 @@ from sqlalchemy.sql import func
 
 class User(Base):
     __tablename__ = "users"
+    cache_ok = True
     id = Column(
         GUID,
         primary_key=True,
@@ -31,4 +32,11 @@ class User(Base):
         for role in self.roles:
             if role.id == "admin":
                 return True
+        return False
+    
+    def has_permission(self, permission_id):
+        for role in self.roles:
+            for permission in role.permissions:
+                if permission.id == permission_id:
+                    return True
         return False

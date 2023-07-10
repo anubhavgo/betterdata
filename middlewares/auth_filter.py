@@ -9,9 +9,9 @@ class AuthMiddleware:
         self.app = app
         self.token_service = TokenService()
 
-    async def __call__(self, request: Request, call_next):
+    async def __call__(self, request: Request, call_next): 
         # Exclude specific routes from token verification if needed
-        if not request.url.path.startswith("/users"):
+        if not request.url.path.startswith("/users") and not request.url.path.startswith("/analytics"):
             return await call_next(request)
         for path, method in EXCLUDED_URLS:
             if request.url.path == path and request.method == method:

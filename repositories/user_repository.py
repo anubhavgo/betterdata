@@ -1,7 +1,6 @@
 from typing import List
 from sqlalchemy.orm import Session
 from sqlalchemy import update
-
 from models.user_model import User
 from models.role_model import Role
 from models.permission_model import Permission
@@ -17,8 +16,9 @@ class UserRepository:
         self.db = db
         self.role_repo = RoleRepository(db)
 
-    def get_all_users(self):
-        users = self.db.query(User).all()
+    def get_all_users(self,offset=0, limit=1000):
+        if limit > 1000: limit = 1000
+        users = self.db.query(User).offset(offset).limit(limit).all()
         return users
 
     def get_user_by_id(self, user_id: str):
@@ -44,13 +44,20 @@ class UserRepository:
         self.db.refresh(new_user)
         return new_user
 
-    def update_user(self, user_id: str, updated_user: User):
+    def replace_user(self,updated_user: User, user_id: str):
         user = self.get_user_by_id(user_id)
         if not user: return
         for field, value in updated_user.dict().items():
             setattr(user, field, value)
         self.db.commit()
-        print(user)
+        return user        
+    
+    def update_user(self,updated_user: User, user_id: str):
+        user = self.get_user_by_id(user_id)
+        if not user: return
+        for field, value in updated_user.dict().items():
+            if value is not None: setattr(user, field, value) 
+        self.db.commit()
         return user
 
     def delete_user(self, user_id: str):

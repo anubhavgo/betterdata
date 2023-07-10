@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from schemas.user_schema import User
 from schemas.token_schema import TokenData
 import time
 from fastapi import HTTPException

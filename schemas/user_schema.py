@@ -14,7 +14,7 @@ class UserBase(BaseModel):
     birth_date: str
     avatar: str
     addresses: List[Address]
-    status: Optional[str]
+    status: str
 
 class User(UserBase):
     id: Optional[UUID]
@@ -44,3 +44,14 @@ class UserReplace(User):
             'created_at': {'exclude':True},
             'updated_at': {'exclude':True}
         }
+
+class UserUpdate(BaseModel):
+    first_name: Optional[str]
+    last_name: Optional[str]
+    gender: Optional[str]
+    email: Optional[str]
+    phone: Optional[str]
+    birth_date: Optional[str]
+    avatar: Optional[str]
+    addresses: Optional[List[Address]]
+    status: Optional[str]

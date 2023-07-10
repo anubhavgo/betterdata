@@ -1,9 +1,0 @@
-branch-defaults:
-  master:
-    environment: $BetterdataDemoApp-env
-global:
-  application_name: Betterdata Demo App
-  default_ec2_keyname: ebs-ec2
-  default_platform: ECS running on 64bit Amazon Linux 2/3.2.9
-  default_region: us-east-2
-  sc: git
