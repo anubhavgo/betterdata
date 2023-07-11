@@ -1,12 +1,16 @@
 from starlette.middleware.base import BaseHTTPMiddleware
 from models.request_log_model import RequestLog
 from repositories.request_logs_repository import RequestLogRepository
-from database import SessionLocal
+from dependencies import get_db
+from sqlalchemy.orm import Session
+
+from fastapi import APIRouter, HTTPException, Depends
 
 class LoggingMiddleware(BaseHTTPMiddleware):
     def __init__(self,app):
         super().__init__(app)
-        self.req_log_repo = RequestLogRepository(SessionLocal())
+        self.db = next(get_db())
+        self.req_log_repo = RequestLogRepository(self.db)
 
     async def dispatch(self, request, call_next):
         response = await call_next(request)
