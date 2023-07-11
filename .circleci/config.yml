@@ -37,6 +37,6 @@ workflows:
       - aws-ecs/deploy-service-update:
           cluster: betterdata_cluster
           family: python-app
-          service-name: betterdata2
+          service-name: betterdata_svc
           requires:
             - aws-ecr/build-and-push-image    
